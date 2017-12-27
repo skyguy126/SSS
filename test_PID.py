@@ -1,11 +1,21 @@
-import time
+import time, math
 from PID import PID
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.interpolate import spline
 
+def lookup(val):
+    tmp = math.fabs(val)
+    if tmp > 0.23:
+        if val < 0:
+            return -0.23
+        else:
+            return 0.23
+    else:
+        return val
+
 if __name__ == "__main__":
-    pid = PID(1.2, 1.0, 0.00001, -1.0, 1.0)
+    pid = PID(1.2, 5, 0.01, -5.0, 5.0)
     pid.set_target_value(0.0)
 
     value_list = []
@@ -14,36 +24,30 @@ if __name__ == "__main__":
 
     current_value = 0.0
 
-    for i in xrange(0, 100):
+    for i in xrange(0, 500):
         pid.update_pid(current_value)
         output = pid.get_pid()
 
-        if i >= 25:
-            pid.set_target_value(1.0)
+        if i >= 50:
+            pid.set_target_value(1)
         else:
             pid.set_target_value(0.0)
 
-        current_value += output
+        print str(output)
 
+        current_value += lookup(output)
         time.sleep(0.02)
 
         value_list.append(current_value)
         time_list.append(i)
         input_list.append(pid.get_target_value())
 
-    time_sm = np.array(time_list)
-    time_smooth = np.linspace(time_sm.min(), time_sm.max(), 300)
-    value_smooth = spline(time_list, value_list, time_smooth)
-
-    plt.plot(time_smooth, value_smooth)
+    plt.plot(time_list, value_list)
     plt.plot(time_list, input_list)
-    plt.xlim((0, 100))
-    plt.ylim((min(value_list)-0.5, max(value_list)+0.5))
+    plt.xlim((0, 500))
     plt.xlabel('time (s)')
     plt.ylabel('PID (PV)')
     plt.title('TEST PID')
-
-    plt.ylim((1-0.5, 1+0.5))
 
     plt.grid(True)
     plt.show()
