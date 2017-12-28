@@ -41,7 +41,7 @@ class PID:
         self.i = self.ki * self.integrator
 
         if self.time_delta > 0:
-            self.d = self.kd * (self.error / self.time_delta)
+            self.d = self.kd * ((self.error - self.last_error) / self.time_delta)
 
         self.last_error = self.error
         self.last_time = self.current_time
