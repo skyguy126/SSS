@@ -1,2 +1,2 @@
-# adcs_sss
-Attitude Determination and Control System for SSS@UCD
+# SSS
+Attitude Determination and Control Systems for SSS@UCD
